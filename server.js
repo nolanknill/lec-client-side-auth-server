@@ -109,22 +109,13 @@ app.post('/login', (req, res) => {
 });
 
 // a protected route, note we are using a second parameter "authorize" which is our middleware for authentication
-app.get('/profile', authorize, (req, res) => {
-  // if user is authenticated send back the token info that we stored in request object in the middleware but also any additional sensitive information
-  res.json({
-    tokenInfo: req.jwtDecoded,
-    accountInfo: {
-      performanceLevel: '7.5',
-      reviewDate: '09/15/2020'
-    }
-  });
-});
+app.get('/posts', authorize, (req, res) => {
+  
+  const userId = req.jwtDecoded.id;
 
-// another route that requires authentication
-app.get('/secret-page', authorize, (req, res) => {
-  res.json({
-    discountCode: 'BSTN-ALUM-7sD4h'
-  });
+  const filteredPosts = posts.filter(post => post.user_id === userId);
+
+  res.json(filteredPosts);
 });
 
 app.listen(port, () => {
